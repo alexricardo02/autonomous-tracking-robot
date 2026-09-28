@@ -1,0 +1,158 @@
+import cv2
+import numpy as np
+import asyncio
+import subprocess
+import time
+import threading
+import socket     
+import pickle     
+import struct     
+
+from irobot_edu_sdk.backend.bluetooth import Bluetooth
+from irobot_edu_sdk.robots import Create3, event
+
+# ==========================================
+# 0. GLOBAL VARIABLES (DECOUPLED ARCHITECTURE)
+# ==========================================
+shared_frame = None            # Pure and real-time frame from the camera
+current_command = "STOP"       # Current instruction received from the Laptop
+
+# ==========================================
+# 1. THREAD 1: CAMERA READER (ZERO TCP LATENCY)
+# ==========================================
+def camera_reader_thread():
+    global shared_frame
+    cap = cv2.VideoCapture("tcp://127.0.0.1:8888")
+    
+    while True:
+        ret, frame = cap.read()
+        if ret:
+            # BANDWIDTH OPTIMIZATION:
+            # Downscaling to 400x300 ensures extreme fluidity for the AI model
+            shared_frame = cv2.resize(frame, (400, 300))
+        else:
+            time.sleep(0.01)
+
+threading.Thread(target=camera_reader_thread, daemon=True).start()
+
+# ==========================================
+# 2. THREAD 2: VIDEO STREAMING SERVER (PORT 9999)
+# ==========================================
+def video_streaming_server():
+    global shared_frame
+    
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    server_socket.bind(('0.0.0.0', 9999)) 
+    server_socket.listen(5)
+    
+    print("[INFO] VIDEO SERVER started. Waiting for connection on port 9999...")
+
+    while True:
+        client_socket, addr = server_socket.accept()
+        print(f"[INFO] Laptop (Video) connected from: {addr}")
+        try:
+            while True:
+                if shared_frame is not None:
+                    frame_to_send = shared_frame.copy() 
+                    
+                    # Serialize the frame (Convert to JPEG Bytes)
+                    ret, buffer = cv2.imencode('.jpg', frame_to_send, [cv2.IMWRITE_JPEG_QUALITY, 70])
+                    if not ret: continue
+                    serialized_frame = buffer.tobytes()
+                    
+                    # Pack the exact size ("Q" = 8 bytes universally for 64-bit sync)
+                    message_size = struct.pack("Q", len(serialized_frame))
+                    
+                    # Send size + frame over the network
+                    client_socket.sendall(message_size + serialized_frame)
+                    
+                    time.sleep(0.03) 
+        except Exception as e:
+            print(f"[WARNING] Video connection dropped: {e}")
+            client_socket.close()
+
+threading.Thread(target=video_streaming_server, daemon=True).start()
+
+# ==========================================
+# 3. THREAD 3: COMMAND RECEIVER SERVER (PORT 9998)
+# ==========================================
+def command_receiver_server():
+    global current_command
+    
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    server_socket.bind(('0.0.0.0', 9998))
+    server_socket.listen(5)
+    
+    print("[INFO] COMMAND SERVER started. Waiting for connection on port 9998...")
+
+    while True:
+        client_socket, addr = server_socket.accept()
+        print(f"[INFO] Laptop (Control) connected from: {addr}")
+        try:
+            while True:
+                data = client_socket.recv(1024)
+                if not data:
+                    break
+                
+                current_command = data.decode('utf-8').strip()
+                
+        except Exception as e:
+            print(f"[WARNING] Control connection dropped: {e}")
+            client_socket.close()
+            current_command = "STOP"
+
+threading.Thread(target=command_receiver_server, daemon=True).start()
+
+# ==========================================
+# 4. BLUETOOTH MANAGEMENT
+# ==========================================
+
+print("[INFO] 4/4 - Connecting SDK...")
+backend = Bluetooth()
+robot = Create3(backend)
+
+# ==========================================
+# 5. MAIN LOOP (360 DEGREES ROTATION CONTROL)
+# ==========================================
+@event(robot.when_play)
+async def main_loop(robot):
+    global current_command
+    
+    print("[INFO] Robot ready! Waiting for 360 degree scan trigger from Laptop...")
+
+    try:
+        while True:
+            if current_command.startswith("WHEELS:"):
+                try:
+                    # String zerlegen: "WHEELS:speedL,speedR,STATE"
+                    parts = current_command.split(":")[1].split(",")
+                    left_speed = float(parts[0])
+                    right_speed = float(parts[1])
+                    
+                    # State_trigger auslesen falls mitgegeben
+                    state_trigger = parts[2] if len(parts) > 2 else "NONE"
+                    
+                    # 1. Motoren setzen (Der Roboter dreht sich unterbrechungsfrei weiter!)
+                    await robot.set_wheel_speeds(left_speed, right_speed)
+                    
+                    # 2. Audio-Signal asynchron feuern, wenn ein neues Objekt registriert wurde
+                    if state_trigger == "FOUND":
+                        # Hoher, kurzer Ton: Note 78 (F#5) für 0.15 Sekunden
+                        asyncio.create_task(robot.play_note(78, 0.15))
+                        
+                except Exception as e:
+                    await robot.set_wheel_speeds(0, 0)
+            else:
+                await robot.set_wheel_speeds(0, 0)
+                
+            await asyncio.sleep(0.05) 
+
+    except KeyboardInterrupt:
+        print("\n[INFO] Manual shutdown triggered.")
+    finally:
+        await robot.set_wheel_speeds(0, 0)
+        print("[INFO] All systems safely terminated.")
+
+robot.play()
