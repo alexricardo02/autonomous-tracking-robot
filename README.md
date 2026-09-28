@@ -15,7 +15,7 @@
 [![Companion Bot Demo](https://img.youtube.com/vi/9igAlqUpiME/hqdefault.jpg)](https://youtu.be/9igAlqUpiME)
 
 ### Interactive Object Hunter
-[![Interactive Object Hunter Demo](https://youtu.be/msGf3b2SrB8/hqdefault.jpg)](https://youtu.be/msGf3b2SrB8)
+[![Interactive Object Hunter Demo](https://img.youtube.com/vi/msGf3b2SrB8/hqdefault.jpg)](https://youtu.be/msGf3b2SrB8)
 
 ### AI Warehouse Inspector (360° Inventory Scan)
 [![Warehouse Inspector Demo](PLACEHOLDER_THUMBNAIL_URL_WAREHOUSE_INSPECTOR)](PLACEHOLDER_YOUTUBE_LINK_3)
