@@ -9,7 +9,7 @@
 
 ---
 
-## Demo
+## Videos
 
 ### Companion Bot (Person Following)
 [![Companion Bot Demo](https://img.youtube.com/vi/9igAlqUpiME/hqdefault.jpg)](https://youtu.be/9igAlqUpiME)
@@ -28,19 +28,16 @@ This project implements a distributed autonomous robotics system coupling an iRo
 
 ---
 
-## Photos
+## Setup
 
-![Robot hardware setup](docs/images/PLACEHOLDER-hardware-setup.png)
-*Raspberry Pi 4 + Camera Module 3 mounted on the Create 3 chassis powered by an external USB-C power bank.*
+<p align="center">
+  <img src="docs/images/setup.jpg" alt="Hardware Setup" width="50%">
+</p>
 
-![YOLO detection stream](docs/images/PLACEHOLDER-yolo-detection.png)
-*Real-time Tiny-YOLOv3 detection stream running on the laptop backend with bounding boxes, confidence scores, and tracking telemetry.*
-
-![Warehouse inspector inventory HUD](docs/images/PLACEHOLDER-warehouse-inventory.png)
-*AI Warehouse Inspector UI displaying the 360° rotation progress bar, active bounding boxes, and real-time itemized inventory counts.*
-
-![HSV Color Masking and Ball Tracking](docs/images/PLACEHOLDER-hsv-tracking.png)
-*OpenCV computer vision pipeline: HSV color thresholding, morphological filtering, and contour localization for autonomous ball tracking.*
+- *Raspberry Pi 4 + Camera Module 3 mounted on the Create 3 chassis powered by an external USB-C power bank.*
+- *Real-time Tiny-YOLOv3 detection stream running on the laptop backend with bounding boxes, confidence scores, and tracking telemetry.*
+- *AI Warehouse Inspector UI displaying the 360° rotation progress bar, active bounding boxes, and real-time itemized inventory counts.*
+- *OpenCV computer vision pipeline: HSV color thresholding, morphological filtering, and contour localization for autonomous ball tracking.*
 
 ---
 
