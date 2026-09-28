@@ -12,10 +12,10 @@
 ## Demo
 
 ### Companion Bot (Person Following)
-[![Companion Bot Demo](PLACEHOLDER_THUMBNAIL_URL_COMPANION_BOT)](PLACEHOLDER_YOUTUBE_LINK_1)
+[![Companion Bot Demo](https://img.youtube.com/vi/9igAlqUpiME/hqdefault.jpg)](https://youtu.be/9igAlqUpiME)
 
 ### Interactive Object Hunter
-[![Interactive Object Hunter Demo](PLACEHOLDER_THUMBNAIL_URL_OBJECT_HUNTER)](PLACEHOLDER_YOUTUBE_LINK_2)
+[![Interactive Object Hunter Demo](https://youtu.be/msGf3b2SrB8/hqdefault.jpg)](https://youtu.be/msGf3b2SrB8)
 
 ### AI Warehouse Inspector (360° Inventory Scan)
 [![Warehouse Inspector Demo](PLACEHOLDER_THUMBNAIL_URL_WAREHOUSE_INSPECTOR)](PLACEHOLDER_YOUTUBE_LINK_3)
@@ -110,29 +110,6 @@ flowchart LR
     Pi -->|"BLE (irobot-edu-sdk)"| Audio
 ```
 
----
-
-## Repository Structure
-
-```text
-.
-├── pi/
-│   ├── challenge2_1.py              # Manual keyboard teleoperation (WASD) using pynput
-│   ├── challenge2_2.py              # Autonomous square-driving routine with async bumper collision interrupt
-│   ├── challenge4.py                # BLE Create 3 control from Pi with synchronized dual-color LED status indicators
-│   ├── challenge5_ph1.py            # Phase 1: Video pipeline validation and single-frame capture
-│   ├── challenge5_ph2.py            # Phase 2: Color space transformation from BGR to HSV
-│   ├── challenge5_ph3.py            # Phase 3: HSV color masking and morphological cleanup (erosion & dilation)
-│   ├── challenge5_ph4.py            # Phase 4: Contour detection and minimum enclosing circle localization
-│   ├── challenge5_ph5.py            # Phase 5: Autonomous ball tracking (follow blue / evade red) with browser HTTP stream
-│   ├── Personenerkennung.py          # Distributed edge server: TCP video stream (9999) & command processor (9998)
-│   ├── challenge6_pi_objects.py      # Edge server variant with acoustic chime feedback for object hunting
-│   └── warehouse_inspector_pi.py     # Edge server variant with non-blocking audio alerts for 360° warehouse scanning
-└── laptop/
-    ├── challenge6_laptop_personenerkennung-2.py  # AI backend for Companion Bot: standing-person detection & state tracking
-    ├── challenge6_laptop_objects.py              # AI backend for Object Hunter: interactive CLI selector & visual servoing
-    └── challenge6_laptop_warehouse_inspector-3.py # AI backend for Warehouse Inspector: 360° scan, inventory de-duplication & HUD
-```
 
 ---
 
