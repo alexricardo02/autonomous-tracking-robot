@@ -126,20 +126,20 @@ async def main_loop(robot):
         while True:
             if current_command.startswith("WHEELS:"):
                 try:
-                    # String zerlegen: "WHEELS:speedL,speedR,STATE"
+                    # Parse the string: "WHEELS:speedL,speedR,STATE"
                     parts = current_command.split(":")[1].split(",")
                     left_speed = float(parts[0])
                     right_speed = float(parts[1])
                     
-                    # State_trigger auslesen falls mitgegeben
+                    # Read the state_trigger if provided
                     state_trigger = parts[2] if len(parts) > 2 else "NONE"
                     
-                    # 1. Motoren setzen (Der Roboter dreht sich unterbrechungsfrei weiter!)
+                    # 1. Set motor speeds (the robot keeps rotating without interruption!)
                     await robot.set_wheel_speeds(left_speed, right_speed)
                     
-                    # 2. Audio-Signal asynchron feuern, wenn ein neues Objekt registriert wurde
+                    # 2. Fire the audio signal asynchronously when a new object is registered
                     if state_trigger == "FOUND":
-                        # Hoher, kurzer Ton: Note 78 (F#5) für 0.15 Sekunden
+                        # Short, high-pitched tone: Note 78 (F#5) for 0.15 seconds
                         asyncio.create_task(robot.play_note(78, 0.15))
                         
                 except Exception as e:

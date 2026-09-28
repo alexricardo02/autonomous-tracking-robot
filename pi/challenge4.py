@@ -34,7 +34,7 @@ async def play(robot):
 
 # Parallel task executed concurrently to handle the visual state indicator
 @event(robot.when_play)
-async def luces(robot):
+async def lights(robot):
     while True:
         if stop:
             break

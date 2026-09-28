@@ -8,7 +8,7 @@ def main():
     if not cap.isOpened():
         return
 
-    print("[INFO] Phase 4 aktiv. Berechne Ballkoordinaten...")
+    print("[INFO] Phase 4 active. Computing ball coordinates...")
     lower_blue = np.array([100, 50, 50])
     upper_blue = np.array([130, 255, 255])
     kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))
@@ -41,7 +41,7 @@ def main():
                     
                     print(f"[TRACKING] X: {center[0]} | Y: {center[1]} | Radius: {int(radius)} | Offset: {delta_x}")
                     
-                    # Zeichnen der Overlays für das Debugging
+                    # Draw debug overlays
                     cv2.circle(resized_frame, center, int(radius), (0, 255, 0), 2)
                     cv2.circle(resized_frame, center, 5, (0, 0, 255), -1)
                     
@@ -49,10 +49,10 @@ def main():
                         cv2.imwrite("test_tracking.jpg", resized_frame)
                         saved_tracking_image = True
             else:
-                print("[INFO] Kein Ball im Sichtfeld.")
+                print("[INFO] No ball in field of view.")
 
     except KeyboardInterrupt:
-        print("\n[INFO] Beendet.")
+        print("\n[INFO] Terminated.")
     cap.release()
 
 if __name__ == "__main__":

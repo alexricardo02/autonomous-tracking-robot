@@ -96,7 +96,7 @@ def main():
     detector.loadModel()
     print("[AI] Model Loaded Successfully!")
 
-    # Warten auf das erste Videobild vor dem Start der Rotation
+    # Wait for the first video frame before starting the rotation
     print("[SYSTEM] Waiting for initial camera frame...")
     while latest_frame is None:
         time.sleep(0.1)
@@ -106,12 +106,12 @@ def main():
     print("="*50)
 
     # --- SCANNING PARAMETERS ---
-    ROTATION_DURATION = 25.0  # Sekunden für eine volle 360-Drehung (Ggf. an Boden anpassen!)
-    ROTATION_SPEED = 1.0      # Konstante Rotationsgeschwindigkeit
-    COOLDOWN_TIME = 2.5       # Sekunden, die ein Objekt unsichtbar sein muss, um neu gezählt zu werden
+    ROTATION_DURATION = 25.0  # Seconds for a full 360° rotation (adjust to floor conditions!)
+    ROTATION_SPEED = 1.0      # Constant rotation speed
+    COOLDOWN_TIME = 2.5       # Seconds an object must be out of view before being counted again
 
-    inventory = {}            # Speichert { "bottle": 2, "chair": 1, ... }
-    last_seen_objects = {}    # Speichert { "bottle": timestamp, ... }
+    inventory = {}            # Stores { "bottle": 2, "chair": 1, ... }
+    last_seen_objects = {}    # Stores { "bottle": timestamp, ... }
     
     start_time = time.time()
     scan_active = True
@@ -131,27 +131,27 @@ def main():
             current_time = time.time()
             state_trigger = "NONE"
 
-            # Inferenz für ALLE Objekte (Kein custom_objects Filter!)
+            # Run inference on ALL objects (no custom_objects filter!)
             detections = detector.detectObjectsFromImage(
                 input_image=frame_to_process,
                 minimum_percentage_probability=50
             )
 
-            # Extrahiere alle in DIESEM Frame erkannten Klassen (Unique Set)
+            # Extract all classes detected in THIS frame (unique set)
             classes_in_frame = set([obj["name"] for obj in detections])
 
-            # --- INVENTAR- UND COOLDOWN-LOGIK ---
+            # --- INVENTORY AND COOLDOWN LOGIC ---
             for class_name in classes_in_frame:
-                # Wenn das Objekt neu ist ODER der Cooldown abgelaufen ist (Objekt wurde zwischenzeitlich aus den Augen verloren)
+                # If the object is new OR the cooldown has expired (object was temporarily out of view)
                 if class_name not in last_seen_objects or (current_time - last_seen_objects[class_name] > COOLDOWN_TIME):
                     inventory[class_name] = inventory.get(class_name, 0) + 1
                     state_trigger = "FOUND"
-                    print(f"🎉 [INVENTAR] Neues Objekt erkannt: {class_name.upper()} (Gesamtbestand: {inventory[class_name]})")
+                    print(f"🎉 [INVENTORY] New object detected: {class_name.upper()} (Total count: {inventory[class_name]})")
                 
-                # Zeitstempel aktualisieren, solange das Objekt im Bild zu sehen ist
+                # Update the timestamp as long as the object is visible
                 last_seen_objects[class_name] = current_time
 
-            # Bounding Boxes im Video einzeichnen
+            # Draw bounding boxes on the video feed
             for obj in detections:
                 box = obj["box_points"]
                 name = obj["name"]
@@ -159,10 +159,10 @@ def main():
                 cv2.rectangle(frame_to_process, (box[0], box[1]), (box[2], box[3]), (0, 255, 0), 2)
                 cv2.putText(frame_to_process, f"{name} {int(percentage)}%", (box[0], box[1] - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
 
-            # Befehl senden: Immer konstant drehen, STATE_TRIGGER signalisiert Funde für Audio
+            # Send command: rotate at constant speed; STATE_TRIGGER signals new finds for audio
             send_command(f"WHEELS:{ROTATION_SPEED},{-ROTATION_SPEED},{state_trigger}")
 
-            # HUD auf dem Live-Stream zeichnen
+            # Draw HUD on the live stream
             y_offset = 30
             cv2.putText(frame_to_process, f"SCANNING 360... Progress: {int((elapsed_time/ROTATION_DURATION)*100)}%", (10, y_offset), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 255), 2)
             
@@ -172,16 +172,16 @@ def main():
 
             cv2.imshow("Warehouse AI 360 Scanner", frame_to_process)
             if cv2.waitKey(1) & 0xFF == ord('q'):
-                print("[INFO] Scan manuell abgebrochen.")
+                print("[INFO] Scan manually aborted.")
                 break
 
     finally:
-        # Nach Ablauf der Zeit oder bei Abbruch: Vollbremsung!
+        # After time expires or on abort: full stop!
         print("\n" + "="*50)
-        print("🏁 INSPREKTION BEENDET! FINALES INVENTAR:")
+        print("🏁 INSPECTION COMPLETE! FINAL INVENTORY:")
         print("="*50)
         if not inventory:
-            print("Keine Objekte erkannt.")
+            print("No objects detected.")
         for item, count in inventory.items():
             print(f"📦 {item.upper()}: {count}")
         print("="*50)
@@ -192,4 +192,4 @@ def main():
         print("[INFO] AI Backend Terminated Safely.")
 
 if __name__ == "__main__":
-    main()
+    main()

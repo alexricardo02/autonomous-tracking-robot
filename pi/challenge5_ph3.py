@@ -6,18 +6,18 @@ def main():
     cap = cv2.VideoCapture(stream_url)
     
     if not cap.isOpened():
-        print("[ERROR] Videoserver nicht erreichbar.")
+        print("[ERROR] Video server not reachable.")
         return
 
-    print("[INFO] Phase 3 aktiv. Filterung und morphologische Reinigung...")
+    print("[INFO] Phase 3 active. Filtering and morphological cleanup...")
 
-    # Definition der experimentell ermittelten HSV-Farbwerte
+    # HSV color range values determined experimentally
     lower_blue = np.array([100, 50, 50])
     upper_blue = np.array([130, 255, 255])
     lower_red = np.array([0, 150, 100])
     upper_red = np.array([10, 255, 255])
 
-    # Elliptischer Kern für morphologische Operationen
+    # Elliptical kernel for morphological operations
     kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))
     saved_masks = False
 
@@ -34,11 +34,11 @@ def main():
             
             hsv = cv2.cvtColor(resized_frame, cv2.COLOR_BGR2HSV)
             
-            # Maskierung
+            # Masking
             mask_blue = cv2.inRange(hsv, lower_blue, upper_blue)
             mask_red = cv2.inRange(hsv, lower_red, upper_red)
             
-            # Morphologische Reinigung (Erosion gefolgt von Dilatation)
+            # Morphological cleanup (erosion followed by dilation)
             cleaned_blue = cv2.erode(mask_blue, kernel, iterations=2)
             cleaned_blue = cv2.dilate(cleaned_blue, kernel, iterations=2)
             
@@ -48,11 +48,11 @@ def main():
             if not saved_masks:
                 cv2.imwrite("mask_blue_cleaned.jpg", cleaned_blue)
                 cv2.imwrite("mask_red_cleaned.jpg", cleaned_red)
-                print("[SUCCESS] Gereinigte Masken erfolgreich gespeichert!")
+                print("[SUCCESS] Cleaned masks saved successfully!")
                 saved_masks = True
 
     except KeyboardInterrupt:
-        print("\n[INFO] Abgebrochen.")
+        print("\n[INFO] Aborted.")
 
     cap.release()
 

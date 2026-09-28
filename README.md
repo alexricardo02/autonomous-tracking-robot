@@ -175,13 +175,13 @@ Follows a standing individual, centers the target horizontally via proportional 
 ```bash
 # Terminal 1 (Pi): Start edge server
 cd ~/pi && source env/bin/activate
-python Personenerkennung.py
+python ch6_Personenerkennung.py
 ```
 
 ```bash
 # Terminal 2 (Laptop): Start AI backend
 cd laptop && source env/bin/activate
-python challenge6_laptop_personenerkennung-2.py
+python challenge6_laptop_personenerkennung.py
 ```
 
 ### Scenario B: Interactive Object Hunter
@@ -191,7 +191,7 @@ Presents an interactive terminal menu of 80 COCO classes. Once selected, the rob
 ```bash
 # Terminal 1 (Pi): Start edge server
 cd ~/pi && source env/bin/activate
-python challenge6_pi_objects.py
+python ch6_pi_objects.py
 ```
 
 ```bash
@@ -207,13 +207,13 @@ Executes an automated, timed 360° continuous rotation while identifying all vis
 ```bash
 # Terminal 1 (Pi): Start edge server
 cd ~/pi && source env/bin/activate
-python warehouse_inspector_pi.py
+python ch6_warehouse_inspector_pi.py
 ```
 
 ```bash
 # Terminal 2 (Laptop): Start AI backend
 cd laptop && source env/bin/activate
-python challenge6_laptop_warehouse_inspector-3.py
+python challenge6_laptop_warehouse_inspector.py
 ```
 
 ---
@@ -252,4 +252,3 @@ This project was engineered as part of the *Angewandte Robotik* (Applied Robotic
 
 This project is licensed under the MIT License. See `LICENSE` for details.
 
-<!-- TODO: confirm license -->

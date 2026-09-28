@@ -2,49 +2,49 @@ import cv2
 import os
 
 def main():
-    # 1. Hardware-Stream der Kamera initialisieren (0 ist der Index der Pi-Kamera)
+    # 1. Initialize the hardware camera stream (0 is the index of the Pi camera)
     cap = cv2.VideoCapture(0)
     
     if not cap.isOpened():
-        print("[FEHLER] Zugriff auf die Pi-Kamera nicht möglich. Prüft die Flex-Kabelverbindung.")
+        print("[ERROR] Cannot access the Pi camera. Check the flex cable connection.")
         return
-    print("[INFO] Pi-Kamera korrekt initialisiert.")
-    print("[INFO] Steuerungs-Frame wird erfasst...")
+    print("[INFO] Pi camera initialized successfully.")
+    print("[INFO] Capturing calibration frame...")
 
-    # 2. Ein einzelnes Bild (Frame) erfassen
+    # 2. Capture a single frame
     ret, frame = cap.read()
     
     if ret:
-        # --- DER PERFORMANCE-TRICK ---
-        # Wir skalieren das Frame auf eine feste, geringe Breite (600 Pixel)
-        # Weniger Pixel reduzieren die Arbeitslast auf der Pi exponentiell (eingeschränkte Ressourcen)
+        # --- THE PERFORMANCE TRICK ---
+        # We scale the frame down to a fixed, low width (600 pixels).
+        # Fewer pixels reduce the Pi's workload exponentially (limited resources).
         target_width = 600
         
-        # Beibehaltung des ursprünglichen Seitenverhältnisses, um Verformungen des Balls zu vermeiden
+        # Preserve the original aspect ratio to avoid distorting the ball
         h, w, _ = frame.shape
         aspect_ratio = h / w
         target_height = int(target_width * aspect_ratio)
         
-        # Geometrische Skalierung optimiert durch Flächeninterpolation
+        # Geometric scaling optimized using area interpolation
         resized_frame = cv2.resize(frame, (target_width, target_height), interpolation=cv2.INTER_AREA)
         
-        # Debug-Metriken in der CLI anzeigen
-        print(f" -> Native Auflösung erkannt: {w}x{h}")
-        print(f" -> Optimierte Auflösung für die Verarbeitung: {target_width}x{target_height}")
+        # Display debug metrics in the CLI
+        print(f" -> Native resolution detected: {w}x{h}")
+        print(f" -> Optimized resolution for processing: {target_width}x{target_height}")
         
-        # --- STRATEGIE FÜR HEADLESS-UMGEBUNG ---
-        # Da wir ohne grafische Oberfläche operieren, würde cv2.imshow() abstürzen.
-        # Wir speichern die Aufnahme als physische Bilddatei.
+        # --- HEADLESS ENVIRONMENT STRATEGY ---
+        # Since we operate without a graphical interface, cv2.imshow() would crash.
+        # We save the capture as a physical image file instead.
         output_filename = "test_capture.jpg"
         cv2.imwrite(output_filename, resized_frame)
         
-        print(f"[ERFOLG] Frame verarbeitet und als '{output_filename}' im aktuellen Verzeichnis gespeichert.")
+        print(f"[SUCCESS] Frame processed and saved as '{output_filename}' in the current directory.")
     else:
-        print("[FEHLER] Fehler bei der Erfassung der Videodaten aus dem Puffer.")
+        print("[ERROR] Failed to capture video data from the buffer.")
 
-    # 3. Kamerasensor-Ressource freigeben (zwingend erforderlich bei eingebetteten Systemen)
+    # 3. Release the camera sensor resource (mandatory on embedded systems)
     cap.release()
-    print("[INFO] Kamera-Ressource korrekt freigegeben.")
+    print("[INFO] Camera resource released successfully.")
 
 if __name__ == "__main__":
     main()

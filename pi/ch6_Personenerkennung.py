@@ -143,22 +143,22 @@ async def main_loop(robot):
 
     try:
         while True:
-            # El nuevo protocolo espera comandos así: "WHEELS:izq,der" (Ej: "WHEELS:-3.2,3.2")
+            # New protocol expects commands in the format: "WHEELS:left,right" (e.g. "WHEELS:-3.2,3.2")
             if current_command.startswith("WHEELS:"):
                 try:
-                    # Extraer los números del texto
-                    # 1. Quita "WHEELS:" -> "-3.2,3.2"
-                    # 2. Separa por la coma -> ["-3.2", "3.2"]
+                    # Extract the numbers from the text:
+                    # 1. Strip "WHEELS:" -> "-3.2,3.2"
+                    # 2. Split by comma -> ["-3.2", "3.2"]
                     speeds_str = current_command.split(":")[1].split(",")
                     left_speed = float(speeds_str[0])
                     right_speed = float(speeds_str[1])
                     
                     await robot.set_wheel_speeds(left_speed, right_speed)
                 except Exception as e:
-                    # Si hay un error decodificando, frena por seguridad
+                    # If decoding fails, stop the robot for safety
                     await robot.set_wheel_speeds(0, 0)
             else:
-                # Fallback de seguridad si el comando está vacío o corrupto
+                # Safety fallback if the command is empty or corrupted
                 await robot.set_wheel_speeds(0, 0)
                 
             await asyncio.sleep(0.05) 
