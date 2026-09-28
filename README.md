@@ -2,10 +2,10 @@
 
 > Real-time object tracking, person following, and warehouse inventory scanning using an iRobot Create 3, Raspberry Pi 4, and distributed Tiny-YOLOv3 edge computing.
 
-[![Python](https://img.shields.io/badge/Python-3.9+-3776AB?style=flat&logo=python&logoColor=white)](https://www.python.org/)
-[![Platform](https://img.shields.io/badge/Platform-Raspberry%20Pi%204%20%7C%20iRobot%20Create%203-C51A4A?style=flat&logo=raspberrypi&logoColor=white)](https://edu.irobot.com/what-we-offer/create3)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![University Project](https://img.shields.io/badge/Hochschule%20Mainz-Angewandte%20Robotik-red)](https://www.hs-mainz.de/)
+![Python](https://img.shields.io/badge/Python_3.9+-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![OpenCV](https://img.shields.io/badge/OpenCV-5C3EE8?style=for-the-badge&logo=opencv&logoColor=white)
+![Raspberry Pi](https://img.shields.io/badge/Raspberry_Pi_4-C51A4A?style=for-the-badge&logo=raspberrypi&logoColor=white)
+![Linux](https://img.shields.io/badge/Linux_/_TCP-FCC624?style=for-the-badge&logo=linux&logoColor=black)
 
 ---
 
